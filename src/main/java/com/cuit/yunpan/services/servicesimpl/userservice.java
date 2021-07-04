@@ -62,8 +62,9 @@ public class userservice implements userservies {
         Map<String, String> map = new HashMap<>();
         int num = udao.checkuser(user);
         String s;
-        if (num == 1) {
+        if (num==1) {
             map.put("user","用户已存在");
+            return map;
         }
         map.put("user","√");
         return map;

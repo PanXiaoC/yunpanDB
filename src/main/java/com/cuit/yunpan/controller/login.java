@@ -44,13 +44,15 @@ public class login {
        return "login";
     }
     @RequestMapping("/toregister")
-    public String toregister(){
+    public String toregister(HttpSession session){
         System.out.println("跳入注册");
+        session.invalidate();
         return "register";
     }
     @RequestMapping("/tochangepwd")
-    public String tochangepwd(){
+    public String tochangepwd( HttpSession session){
         System.out.println("跳入修改密码");
+        session.invalidate();
         return "recover-password";
     }
     @RequestMapping("/doregister")
@@ -97,7 +99,6 @@ public class login {
     @RequestMapping("/docheckuser")
     @ResponseBody
     public String  docheckuser (String tel){
-        System.out.println("进入此方法");
         Map<String,String> map=new HashMap<>();
         userb.setTel(tel);
         System.out.println(userb.getTel());
@@ -106,7 +107,6 @@ public class login {
             System.out.println("用户已存在");
             return "用户已存在";
         }
-        System.out.println("√");
         return "√";
     }
 

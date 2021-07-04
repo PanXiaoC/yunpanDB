@@ -17,6 +17,7 @@
     <!-- App styles -->
     <link rel="stylesheet" href="assets/css/app.css" type="text/css">
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.8.3.min.js "></script>
+    <script type="text/javascript" src="assets/js/jquery-3.3.1.min.js"></script>
 </head>
 <body class="form-membership">
 
@@ -40,7 +41,7 @@
     <!-- form -->
     <form action="/yunpan/doregister">
         <div class="form-group">
-        <input type="text" class="form-control" placeholder="电话号码" required name="tel" onblur="ajaxsubmit()">
+        <input type="text" class="form-control" placeholder="电话号码" required name="tel" onblur="ajaxsubmit() " id="tel">
         <span id="state"></span>
          </div>
         <div class="form-group">
@@ -77,20 +78,16 @@
 </script>
 <script>
 function ajaxsubmit() {
-    alert("d");
-    $.ajax({
-    type:"post",
+    $.post({
         url:"http://localhost:8080/yunpan/docheckuser",
-        data:tel,
-        async : true,
-        dataType : 'json',
+        data:{"tel":$("#tel").val()},
         success:function(msg){
         if(msg!="√"){
             $("#state" ).html( "<font color= 'red'>电话号码已存在</font>");
             $( "#submit" ).prop( "disabled",true) ;
         }
         else{
-            $("#state" ).html( "<font color= 'geeen'>√</font>");
+            $("#state" ).html( "<font color= 'geeen'></font>");
             $( "#submit" ).prop( "disabled",true) ;
         }
      },
