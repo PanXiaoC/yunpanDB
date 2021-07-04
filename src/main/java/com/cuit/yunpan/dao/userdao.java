@@ -25,12 +25,11 @@ public interface userdao {
     @Select("select * from userinfo where username=#{username}")
     public userinfo getAll(userinfo user);
 //    修改密码
-    @Update("update userinfo set pwd=#{pwd} where username=#{username}")
+    @Update("update userinfo set pwd=#{pwd} where tel=#{tel}")
     public boolean updatePwd(userinfo user);
 //    注册
-    @Insert("insert into userinfo(id,username,pwd,gender,tel,email,null,null,0,5) " +
-            "values(#{id},#{username}),#{pwd},#{gender},#{tel},#{email}" +
-            ",#{create_time},#{last_login},#{isAdmin},#{disk_max_size}")
-    public String registerUserinfo(userinfo user);
+    @Insert("insert into userinfo(username,pwd,gender,tel,email,create_time,last_login) values (#{username},#{pwd},#{gender},#{tel},#{email}" +
+            ",now(),now())")
+    public boolean registerUserinfo(userinfo user);
 
 }

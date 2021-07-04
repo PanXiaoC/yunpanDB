@@ -45,4 +45,55 @@ public class login {
        System.out.println("登录失败");
        return "login";
     }
+    @RequestMapping("/toregister")
+    public String toregister(){
+        System.out.println("跳入注册");
+        return "register";
+    }
+    @RequestMapping("/tochangepwd")
+    public String tochangepwd(){
+        System.out.println("跳入修改密码");
+        return "recover-password";
+    }
+    @RequestMapping("/doregister")
+    public String  doregister (String pwd, String username,String tel,String email,String gender,HttpSession session, HttpServletRequest request){
+        Map<String,String> map=new HashMap<>();
+        userb.setPwd(pwd);
+        userb.setUsername(username);
+        userb.setTel(tel);
+        userb.setEmail(email);
+        if(gender.equals("男")){
+            userb.setGender(1);
+        }else
+        {
+            userb.setGender(0);
+        }
+        System.out.println(userb.getPwd());
+        System.out.println(userb.getTel());
+        System.out.println(userb.getEmail());
+        System.out.println(userb.getGender());
+        System.out.println(userb.getUsername());
+        map= users.register(userb);
+        if(map.get("login").equals("注册成功")){
+            System.out.println("注册成功");
+            return "login";
+        }
+        System.out.println("注册失败");
+        return "login";
+    }
+    @RequestMapping("/dochangepwd")
+    public String  dochangepwd (String pwd, String tel,HttpSession session, HttpServletRequest request){
+        Map<String,String> map=new HashMap<>();
+        userb.setPwd(pwd);
+        userb.setTel(tel);
+        System.out.println(userb.getPwd());
+        System.out.println(userb.getTel());
+        map= users.repassword(userb);
+        if(map.get("login").equals("修改成功")){
+            System.out.println("修改成功");
+            return "login";
+        }
+        System.out.println("修改失败");
+        return "login";
+    }
 }

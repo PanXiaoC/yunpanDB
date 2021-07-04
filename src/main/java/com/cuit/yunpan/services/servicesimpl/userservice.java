@@ -37,29 +37,24 @@ public class userservice implements userservies {
 
     public Map<String,String> register(userinfo user){
         Map<String,String> map = new HashMap<>();
-        udao.registerUserinfo(user);
-        String s = "注册成功";
+        boolean t= udao.registerUserinfo(user);
+        String s;
+        if(t){
+            s = "注册成功";
+        }
+         s = "注册失败";
         map.put("login",s);
         return map;
     }
 
     public Map<String,String> repassword(userinfo user){
         Map<String,String> map = new HashMap<>();
-        userinfo us = new userinfo();
-        us = udao.getUserinfoByTel(user);
-        if(us.getTel() != user.getTel()){
-            map.put("notel","无该用户");
-            return map;
-        }
-        us.setPwd(user.getPwd());
-        Boolean i = udao.updatePwd(us);
-        if(i == true){
+      boolean t= udao.updatePwd(user);
+        if(t){
             map.put("login", "修改成功");
-        } else
-        {
-            map.put("failed","修改失败");
         }
+        map.put("failed","修改失败");
+
         return map;
     }
-
 }
