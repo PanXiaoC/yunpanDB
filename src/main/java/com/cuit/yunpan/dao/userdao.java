@@ -15,6 +15,7 @@ public interface userdao {
 //    查看密码
     @Select("select pwd from userinfo where username=#{username}")
     public String getPwd(userinfo user);
+//    通过tel查userinfo数据
     @Select("select *from userinfo where tel=#{tel}")
     public userinfo getUserinfoByTel(userinfo user);
 

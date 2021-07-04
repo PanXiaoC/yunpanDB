@@ -14,7 +14,7 @@ public class userinfo {
     private   String username;
     private   String  pwd;
     private  Integer gender;
-    private  String mobile;
+    private  String tel;
     private   String email;
     private   String create_time;
     private  String last_login;
@@ -25,12 +25,20 @@ public class userinfo {
 
      }
 
+    public String getTel() {
+        return tel;
+    }
+
+    public void setTel(String tel) {
+        this.tel = tel;
+    }
+
     public userinfo(Integer id, String username, String pwd, Integer gender, String mobile, String email, String create_time, String last_login, Integer is_admin, Integer disk_max_size) {
         this.id = id;
         this.username = username;
         this.pwd = pwd;
         this.gender = gender;
-        this.mobile = mobile;
+        this.tel = tel;
         this.email = email;
         this.create_time = create_time;
         this.last_login = last_login;
@@ -71,11 +79,11 @@ public class userinfo {
     }
 
     public String getMobile() {
-        return mobile;
+        return tel;
     }
 
     public void setMobile(String mobile) {
-        this.mobile = mobile;
+        this.tel = mobile;
     }
 
     public String getEmail() {

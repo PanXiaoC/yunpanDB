@@ -23,5 +23,11 @@ class YunpanApplicationTests {
         System.out.println("");
     }
 
+    @Test
+    void getUserinfoByTel(){
+        userin.setMobile("18780693160");
+        System.out.println(user.getUserinfoByTel(userin));
+    }
+
 
 }
