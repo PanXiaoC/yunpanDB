@@ -13,7 +13,9 @@ import java.awt.*;
 @Repository
 public interface userdao {
 //    查看密码
-    @Select("select pwd from userinfo where username=#{username}")
+    @Select("select count(*) from userinfo where tel=#{tel}")
+    public Integer checkuser(userinfo user);
+    @Select("select pwd from userinfo where tel=#{tel}")
     public String getPwd(userinfo user);
 //    通过tel查userinfo数据
     @Select("select *from userinfo where tel=#{tel}")

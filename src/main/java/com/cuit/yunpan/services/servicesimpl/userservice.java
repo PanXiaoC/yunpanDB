@@ -17,13 +17,17 @@ public class userservice implements userservies {
     private userdao udao;
     @Override
     public Map<String,String> login(userinfo user){
-        String s=udao.getPwd(user);
-        System.out.println(s);
+        int num=udao.checkuser(user);
         Map<String,String> map= new HashMap<>();
-        if(s.equals(user.getPwd())){
-            s="登录成功";
-            map.put("login",s);
-            return map;
+        String s;
+        if(num==1){
+            s=udao.getPwd(user);
+            if(s.equals(user.getPwd())){
+                s="登录成功";
+                map.put("login",s);
+                return map;
+            }
+            s="登录失败";
         }
         s="登录失败";
         map.put("login",s);

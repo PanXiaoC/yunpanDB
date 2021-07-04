@@ -16,6 +16,11 @@
 
     <!-- App styles -->
     <link rel="stylesheet" href="assets/css/app.css" type="text/css">
+    <style>
+        #error1{
+            color:red;
+        }
+    </style>
 </head>
 <body class="form-membership">
 
@@ -44,6 +49,7 @@
         <div class="form-group">
             <input type="password" class="form-control" placeholder="输入登录密码" required name="pwd">
         </div>
+        <span th:text="${session.error} " id="error1" ></span>
         <div class="form-group d-flex justify-content-between">
             <div class="custom-control custom-checkbox">
                 <input type="checkbox" class="custom-control-input" checked="" id="customCheck1">

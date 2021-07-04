@@ -32,15 +32,16 @@ public class login {
     public String  dologin (String pwd, String username,HttpSession session, HttpServletRequest request){
         Map<String,String> map=new HashMap<>();
         userb.setPwd(pwd);
-        userb.setUsername(username);
+        userb.setTel(username);
         System.out.println(userb.getPwd());
-        System.out.println(userb.getUsername());
+        System.out.println(userb.getTel());
        map= users.login(userb);
        if(map.get("login").equals("登录成功")){
            System.out.println("登录成功");
             return "index";
        }
-        System.out.println("登录失败");
+       session.setAttribute("error","用户名或密码错误");
+       System.out.println("登录失败");
        return "login";
     }
 }
