@@ -38,6 +38,7 @@ public class login {
        map= users.login(userb);
        if(map.get("login").equals("登录成功")){
            System.out.println("登录成功");
+           session.invalidate();
             return "index";
        }
        session.setAttribute("error","用户名或密码错误");
