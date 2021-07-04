@@ -34,7 +34,7 @@ public class userservice implements userservies {
         map.put("login",s);
         return map;
     }
-
+    @Override
     public Map<String,String> register(userinfo user){
         Map<String,String> map = new HashMap<>();
         boolean t= udao.registerUserinfo(user);
@@ -46,7 +46,7 @@ public class userservice implements userservies {
         map.put("login",s);
         return map;
     }
-
+    @Override
     public Map<String,String> repassword(userinfo user){
         Map<String,String> map = new HashMap<>();
       boolean t= udao.updatePwd(user);
@@ -55,6 +55,17 @@ public class userservice implements userservies {
         }
         map.put("failed","修改失败");
 
+        return map;
+    }
+    @Override
+    public Map<String,String> checkuser(userinfo user) {
+        Map<String, String> map = new HashMap<>();
+        int num = udao.checkuser(user);
+        String s;
+        if (num == 1) {
+            map.put("user","用户已存在");
+        }
+        map.put("user","√");
         return map;
     }
 }

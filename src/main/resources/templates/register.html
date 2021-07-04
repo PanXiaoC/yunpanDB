@@ -16,6 +16,7 @@
 
     <!-- App styles -->
     <link rel="stylesheet" href="assets/css/app.css" type="text/css">
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.8.3.min.js "></script>
 </head>
 <body class="form-membership">
 
@@ -39,11 +40,13 @@
     <!-- form -->
     <form action="/yunpan/doregister">
         <div class="form-group">
-            <input type="text" class="form-control" placeholder="用户名" required autofocus name="username">
-        </div>
+        <input type="text" class="form-control" placeholder="电话号码" required name="tel" onblur="ajaxsubmit()">
+        <span id="state"></span>
+         </div>
         <div class="form-group">
-            <input type="text" class="form-control" placeholder="电话号码" required name="tel">
+            <input type="text" class="form-control" placeholder="用户名" required autofocus name="username" >
         </div>
+
         <div class="form-group">
             <input type="email" class="form-control" placeholder="Email" required name="email">
         </div>
@@ -56,7 +59,7 @@
         <div class="form-group">
             <input type="password" class="form-control" placeholder="再次输入密码" required name="pwd">
         </div>
-        <button class="btn btn-primary btn-block">注册</button>
+        <button class="btn btn-primary btn-block " id="submit">注册</button>
         <hr>
         <p class="text-muted">已经有账号了？</p>
         <a href="/yunpan/tologin" class="btn btn-outline-light btn-sm">登录</a>
@@ -69,6 +72,33 @@
 <script src="vendors/bundle.js"></script>
 
 <!-- App scripts -->
-<script src="assets/js/app.js"></script>
+<script src="assets/js/app.js">
+
+</script>
+<script>
+function ajaxsubmit() {
+    alert("d");
+    $.ajax({
+    type:"post",
+        url:"http://localhost:8080/yunpan/docheckuser",
+        data:tel,
+        async : true,
+        dataType : 'json',
+        success:function(msg){
+        if(msg!="√"){
+            $("#state" ).html( "<font color= 'red'>电话号码已存在</font>");
+            $( "#submit" ).prop( "disabled",true) ;
+        }
+        else{
+            $("#state" ).html( "<font color= 'geeen'>√</font>");
+            $( "#submit" ).prop( "disabled",true) ;
+        }
+     },
+     error:function () {
+         console.log("错误回调函数");
+     }
+    });
+}
+</script>
 </body>
 </html>

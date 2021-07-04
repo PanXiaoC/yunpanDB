@@ -4,9 +4,7 @@ import com.cuit.yunpan.bean.userinfo;
 import com.cuit.yunpan.bean.userinfo;
 import com.cuit.yunpan.services.servicesimpl.userservice;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -96,4 +94,20 @@ public class login {
         System.out.println("修改失败");
         return "login";
     }
+    @RequestMapping("/docheckuser")
+    @ResponseBody
+    public String  docheckuser (String tel){
+        System.out.println("进入此方法");
+        Map<String,String> map=new HashMap<>();
+        userb.setTel(tel);
+        System.out.println(userb.getTel());
+        map= users.checkuser(userb);
+        if(map.get("user").equals("用户已存在")){
+            System.out.println("用户已存在");
+            return "用户已存在";
+        }
+        System.out.println("√");
+        return "√";
+    }
+
 }
