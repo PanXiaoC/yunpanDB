@@ -1,7 +1,11 @@
 package com.cuit.yunpan.bean;
 
-import java.time.DateTimeException;
+import lombok.Data;
+import org.springframework.stereotype.Component;
 
+import java.time.DateTimeException;
+@Data
+@Component
 public class myfiles {
     private int id;
     private int user_id;

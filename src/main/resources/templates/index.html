@@ -40,6 +40,8 @@
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+      <script type="text/javascript" src="http://code.jquery.com/jquery-1.8.3.min.js "></script>
+      <script type="text/javascript" src="assets/js/jquery-3.3.1.min.js"></script>
     <![endif]-->
     <script type="text/javascript">
       
@@ -153,29 +155,29 @@
                           </ul>
 							<!-- begin  文件上传模态对话框 -->
               <div class="modal fade" id="fileUploadModal" tabindex="-1" role="dialog" aria-labelledby="fileUploadModalLabel">
-                <form action="#">
+                <form action="/yunpan/doupload" enctype="multipart/form-data" method="post">
                 <div class="modal-dialog" role="document">
-                 
+
 							    <div class="modal-content">
 							      <div class="modal-header">
 							        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 							        <h4 class="modal-title" id="fileUploadModalLabel">文件上传</h4>
 							      </div>
 							      <div class="modal-body">
-							        
+
                         <div class="form-group">
-                          <label for="uploadInputFile">请选择你要上传的文件</label>
-                          <input type="file" id="uploadInputFile">
+                          <label for="file">请选择你要上传的文件</label>
+                          <input type="file"  name="file" id="file">
                           <p class="help-block">单个文件大小不可超过5G</p>
                         </div>
-							        
+
 							      </div>
-							      <div class="modal-footer">
+							      <div class="modal-footer" id="file1">
 							        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-							        <button type="submit" class="btn btn-primary">开始上传</button>
+							        <button type="submit" class="btn btn-primary" >开始上传</button>
                     </div>
-                 
-                  </div>
+                 </div>
+
                 </form>
 							  </div>
 							</div>
@@ -417,6 +419,24 @@
     </div> <!-- /container -->
     <!-- Bootstrap core JavaScript
     ================================================== -->
-
+    <div style="text-align: center">Copyright&copy; by QuMingNanGroup</div>
+    <script>
+      function ajaxsubmit() {
+        $.post({
+          url:"/yunpan/doupload",
+          data:{"file_path":$("#file_path").val()},
+          success:function (msg) {
+            if(msg==""){
+              $("#state" ).html( "<font color= 'red'>电话号码不存在，请重新输入</font>");
+              $( "#submit" ).prop( "disabled",true);
+            }
+            else{
+              $("#state" ).html( "<font color= 'geeen'></font>");
+              $( "#submit" ).prop( "disabled",true) ;
+            }
+          }
+        })
+      }
+    </script>
   </body>
 </html>

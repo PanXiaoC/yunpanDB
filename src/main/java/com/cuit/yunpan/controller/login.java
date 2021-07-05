@@ -1,16 +1,25 @@
 package com.cuit.yunpan.controller;
 
+import com.cuit.yunpan.bean.myfiles;
 import com.cuit.yunpan.bean.userinfo;
 import com.cuit.yunpan.bean.userinfo;
 import com.cuit.yunpan.services.servicesimpl.userservice;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Controller
 @CrossOrigin
@@ -19,6 +28,8 @@ public class login {
     private userservice users;
     @Resource
     private userinfo userb;
+    @Resource
+    private myfiles file;
 
     @RequestMapping("/tologin")
     public String tologin (){
@@ -27,10 +38,10 @@ public class login {
     }
 
     @RequestMapping("/dologin")
-    public String  dologin (String pwd, String username,HttpSession session, HttpServletRequest request){
+    public String  dologin (String pwd, String tel,HttpSession session, HttpServletRequest request){
         Map<String,String> map=new HashMap<>();
         userb.setPwd(pwd);
-        userb.setTel(username);
+        userb.setTel(tel);
         System.out.println(userb.getPwd());
         System.out.println(userb.getTel());
        map= users.login(userb);
@@ -48,6 +59,12 @@ public class login {
         System.out.println("跳入注册");
         session.invalidate();
         return "register";
+    }
+    @RequestMapping("/tosubmit")
+    public String tosubmit(HttpSession session){
+        System.out.println("跳入文件");
+        session.invalidate();
+        return "submit";
     }
     @RequestMapping("/tochangepwd")
     public String tochangepwd( HttpSession session){
@@ -109,5 +126,10 @@ public class login {
         }
         return "√";
     }
-
+    @RequestMapping(value="/doupload")
+    public String  doupload (@RequestParam("file") MultipartFile file){
+        System.out.println("你好，文件");
+         users.fileserv(file);
+         return "index";
+    }
 }

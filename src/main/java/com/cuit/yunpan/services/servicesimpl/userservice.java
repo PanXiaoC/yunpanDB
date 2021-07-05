@@ -6,8 +6,10 @@ import com.cuit.yunpan.services.userservies;
 import com.sun.javafx.collections.MappingChange;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -69,4 +71,25 @@ public class userservice implements userservies {
         map.put("user","√");
         return map;
     }
+
+    @Override
+    public String fileserv(MultipartFile file) {
+        if(file.isEmpty()){
+            return "400";
+        }
+        String origalname=file.getOriginalFilename();
+        String filename=System.currentTimeMillis()+"."+origalname.substring(origalname.lastIndexOf(".")+1);
+        String filepase="D:\\r\\";
+        File dest= new File(filepase+filename);
+        if(!dest.getParentFile().exists()){
+            dest.getParentFile().mkdirs();
+        }
+        try{
+            file.transferTo(dest);
+        }catch(Exception e){
+            return "400";
+        }
+        return "500";
+    }
+
 }
