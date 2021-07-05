@@ -7,18 +7,18 @@ import java.time.DateTimeException;
 @Data
 @Component
 public class myfiles {
-    private int id;
-    private int user_id;
+    private Integer id;
+    private Integer user_id;
     private String filename;
     private String file_ext;
-    private int file_size;
+    private Long file_size;
     private String create_time;
-    private int is_delete;
-    private int is_folder;
+    private Integer is_delete;
+    private Integer is_folder;
     private String file_path;
-    private int is_update;
-    private int is_upload;
-    private int is_download;
+    private Integer is_update;
+    private Integer is_upload;
+    private Integer is_download;
 
 
 }

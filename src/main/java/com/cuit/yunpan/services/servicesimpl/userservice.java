@@ -1,13 +1,12 @@
 package com.cuit.yunpan.services.servicesimpl;
 
+import com.cuit.yunpan.bean.myfiles;
 import com.cuit.yunpan.bean.userinfo;
 import com.cuit.yunpan.dao.userdao;
 import com.cuit.yunpan.services.userservies;
 import com.sun.javafx.collections.MappingChange;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FSDataOutputStream;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.fs.*;
 import org.apache.hadoop.yarn.webapp.hamlet.Hamlet;
 import org.apache.hadoop.yarn.webapp.hamlet.HamletSpec;
 import org.springframework.stereotype.Service;
@@ -85,7 +84,7 @@ public class userservice implements userservies {
     @Override
     public Map<String,String> repassword(userinfo user){
         Map<String,String> map = new HashMap<>();
-      boolean t= udao.updatePwd(user);
+      boolean t= udao.changePwd(user);
         if(t){
             map.put("login", "修改成功");
         }
@@ -107,7 +106,7 @@ public class userservice implements userservies {
     }
 
     @Override
-    public String fileserv(MultipartFile file)  {
+    public String fileserv(MultipartFile file, userinfo userb, myfiles myfile)  {
         if(file.isEmpty()){
             return "400";
         }
@@ -132,6 +131,25 @@ public class userservice implements userservies {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        userb=udao.getUserinfoById(userb);
+        myfile.setUser_id(userb.getId());
+        myfile.setFilename(origalname);
+        myfile.setFile_ext("."+origalname.substring(origalname.lastIndexOf(".")+1));
+
+        try {
+            FileStatus fileStatus = fileSystem.getFileStatus(hdfsPath);
+            myfile.setFile_size(fileStatus.getLen()/1024);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        myfile.setFile_path(hdfspath);
+        myfile.setIs_upload(1);
+        System.out.println("dao层之前");
+        System.out.println(myfile);
+        if(udao.insertUpLoad(myfile)){
+            System.out.println("dao层sucess!");
+        }
+        System.out.println("dao层之后");
         /*try {
             FileInputStream in=new FileInputStream(dest);
             try {

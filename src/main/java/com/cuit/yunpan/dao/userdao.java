@@ -22,7 +22,7 @@ public interface userdao {
     @Select("select *from userinfo where tel=#{tel}")
     public userinfo getUserinfoByTel(userinfo user);
 
-//    通过id查看userinfo表中的所有数据
+//    通过tel查看userinfo表中的所有数据
     @Select("select * from userinfo where tel=#{tel}")
     public userinfo getUserinfoById(userinfo user);
 //    修改密码(已测试)
@@ -33,7 +33,7 @@ public interface userdao {
             " values(#{username},#{pwd},#{gender},#{tel},#{email},now(),now())")
     public boolean registerUserinfo(userinfo user);
 //  上传
-    @Insert("insert into myfiles(user_id,filename,create_time,is_folder,is_upload)" +
-            " values(#{user_id},#{filename},now(),#{is_folder},#{is_upload})")
+    @Insert("insert into myfiles(user_id,filename,file_ext,file_size,create_time,is_upload,file_path)" +
+            " values(#{user_id},#{filename},#{file_ext},#{file_size},now(),#{is_upload},#{file_path})")
     public boolean insertUpLoad(myfiles myfile);
 }
