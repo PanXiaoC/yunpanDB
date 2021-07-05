@@ -36,4 +36,7 @@ public interface userdao {
     @Insert("insert into myfiles(user_id,filename,file_ext,file_size,create_time,is_upload,file_path)" +
             " values(#{user_id},#{filename},#{file_ext},#{file_size},now(),#{is_upload},#{file_path})")
     public boolean insertUpLoad(myfiles myfile);
+//    通过user_id查myfiles表中数据
+    @Select("select *from myfiles where user_id=#{user_id}")
+    public myfiles getMyfilesByUser_id(Integer user_id);
 }
