@@ -25,6 +25,8 @@ import java.util.*;
 @CrossOrigin
 public class login {
     @Resource
+    private myfiles myfile;
+    @Resource
     private userservice users;
     @Resource
     private userinfo userb;
@@ -129,7 +131,12 @@ public class login {
     @RequestMapping(value="/doupload")
     public String  doupload (@RequestParam("file") MultipartFile file){
         System.out.println("你好，文件");
-         users.fileserv(file);
+//        System.out.println(userb);
+         String s = users.fileserv(file,userb,myfile);
+         if(s.equals("500")){
+             return "index";
+         }
+        System.out.println("=====");
          return "index";
     }
 }

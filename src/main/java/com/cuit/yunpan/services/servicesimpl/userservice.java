@@ -1,9 +1,11 @@
 package com.cuit.yunpan.services.servicesimpl;
 
+import com.cuit.yunpan.bean.myfiles;
 import com.cuit.yunpan.bean.userinfo;
 import com.cuit.yunpan.dao.userdao;
 import com.cuit.yunpan.services.userservies;
 import com.sun.javafx.collections.MappingChange;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -51,7 +53,7 @@ public class userservice implements userservies {
     @Override
     public Map<String,String> repassword(userinfo user){
         Map<String,String> map = new HashMap<>();
-      boolean t= udao.updatePwd(user);
+      boolean t= udao.changePwd(user);
         if(t){
             map.put("login", "修改成功");
         }
@@ -73,10 +75,11 @@ public class userservice implements userservies {
     }
 
     @Override
-    public String fileserv(MultipartFile file) {
+    public String fileserv(MultipartFile file, userinfo userb, myfiles myfile) {
         if(file.isEmpty()){
             return "400";
         }
+//file.getOriginalFilename()得到文件上传时的文件名
         String origalname=file.getOriginalFilename();
         String filename=System.currentTimeMillis()+"."+origalname.substring(origalname.lastIndexOf(".")+1);
         String filepase="D:\\r\\";
@@ -89,6 +92,19 @@ public class userservice implements userservies {
         }catch(Exception e){
             return "400";
         }
+        userb = udao.getUserinfoById(userb);
+        System.out.println(userb);
+        myfile.setUser_id(userb.getId());
+        myfile.setFilename(filename);
+        myfile.setIs_folder(1);
+        myfile.setIs_upload(1);
+        System.out.println("dao层之前");
+        System.out.println(myfile);
+        System.out.println(udao.insertUpLoad(myfile));
+        if(udao.insertUpLoad(myfile)){
+            System.out.println("dao层sucess!");
+        }
+        System.out.println("dao层之后");
         return "500";
     }
 

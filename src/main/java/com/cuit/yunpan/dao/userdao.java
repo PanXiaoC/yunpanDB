@@ -1,5 +1,6 @@
 package com.cuit.yunpan.dao;
 
+import com.cuit.yunpan.bean.myfiles;
 import com.cuit.yunpan.bean.userinfo;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -22,7 +23,7 @@ public interface userdao {
     public userinfo getUserinfoByTel(userinfo user);
 
 //    通过id查看userinfo表中的所有数据
-    @Select("select * from userinfo where id=#{id}")
+    @Select("select * from userinfo where tel=#{tel}")
     public userinfo getUserinfoById(userinfo user);
 //    修改密码(已测试)
     @Update("update userinfo set pwd=#{pwd} where tel=#{tel}")
@@ -31,5 +32,8 @@ public interface userdao {
     @Insert("insert into userinfo(username,pwd,gender,tel,email,create_time,last_login)" +
             " values(#{username},#{pwd},#{gender},#{tel},#{email},now(),now())")
     public boolean registerUserinfo(userinfo user);
-
+//  上传
+    @Insert("insert into myfiles(user_id,filename,create_time,is_folder,is_upload)" +
+            " values(#{user_id},#{filename},now(),#{is_folder},#{is_upload})")
+    public boolean insertUpLoad(myfiles myfile);
 }
