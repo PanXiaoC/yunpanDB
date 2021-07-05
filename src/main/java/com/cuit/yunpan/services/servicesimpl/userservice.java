@@ -6,9 +6,10 @@ import com.cuit.yunpan.services.userservies;
 import com.sun.javafx.collections.MappingChange;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.DigestUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,9 +24,7 @@ public class userservice implements userservies {
         Map<String,String> map= new HashMap<>();
         String s;
         if(num==1){
-//            DigestUtils.md5DigestAsHex(pwd.getBytes())
             s=udao.getPwd(user);
-            s=DigestUtils.md5DigestAsHex(s.getBytes());
             if(s.equals(user.getPwd())){
                 s="登录成功";
                 map.put("login",s);
@@ -52,7 +51,7 @@ public class userservice implements userservies {
     @Override
     public Map<String,String> repassword(userinfo user){
         Map<String,String> map = new HashMap<>();
-      boolean t= udao.changePwd(user);
+      boolean t= udao.updatePwd(user);
         if(t){
             map.put("login", "修改成功");
         }
@@ -72,4 +71,25 @@ public class userservice implements userservies {
         map.put("user","√");
         return map;
     }
+
+    @Override
+    public String fileserv(MultipartFile file) {
+        if(file.isEmpty()){
+            return "400";
+        }
+        String origalname=file.getOriginalFilename();
+        String filename=System.currentTimeMillis()+"."+origalname.substring(origalname.lastIndexOf(".")+1);
+        String filepase="D:\\r\\";
+        File dest= new File(filepase+filename);
+        if(!dest.getParentFile().exists()){
+            dest.getParentFile().mkdirs();
+        }
+        try{
+            file.transferTo(dest);
+        }catch(Exception e){
+            return "400";
+        }
+        return "500";
+    }
+
 }
