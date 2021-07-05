@@ -21,6 +21,7 @@ class YunpanApplicationTests {
 
     @Test
     void contextLoads() {
+
     }
     @Resource
     userdao ud;
