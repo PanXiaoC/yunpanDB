@@ -6,6 +6,7 @@ import com.cuit.yunpan.services.userservies;
 import com.sun.javafx.collections.MappingChange;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.DigestUtils;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -22,7 +23,9 @@ public class userservice implements userservies {
         Map<String,String> map= new HashMap<>();
         String s;
         if(num==1){
+//            DigestUtils.md5DigestAsHex(pwd.getBytes())
             s=udao.getPwd(user);
+            s=DigestUtils.md5DigestAsHex(s.getBytes());
             if(s.equals(user.getPwd())){
                 s="登录成功";
                 map.put("login",s);
@@ -49,7 +52,7 @@ public class userservice implements userservies {
     @Override
     public Map<String,String> repassword(userinfo user){
         Map<String,String> map = new HashMap<>();
-      boolean t= udao.updatePwd(user);
+      boolean t= udao.changePwd(user);
         if(t){
             map.put("login", "修改成功");
         }

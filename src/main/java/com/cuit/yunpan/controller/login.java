@@ -4,6 +4,7 @@ import com.cuit.yunpan.bean.userinfo;
 import com.cuit.yunpan.bean.userinfo;
 import com.cuit.yunpan.services.servicesimpl.userservice;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -29,10 +30,12 @@ public class login {
     @RequestMapping("/dologin")
     public String  dologin (String pwd, String username,HttpSession session, HttpServletRequest request){
         Map<String,String> map=new HashMap<>();
-        userb.setPwd(pwd);
+        String pwdMd5=DigestUtils.md5DigestAsHex(pwd.getBytes());
+        userb.setPwd(pwdMd5);
         userb.setTel(username);
         System.out.println(userb.getPwd());
         System.out.println(userb.getTel());
+//        String pwdMd5=DigestUtils.md5DigestAsHex(pwd.getBytes());
        map= users.login(userb);
        if(map.get("login").equals("登录成功")){
            System.out.println("登录成功");
