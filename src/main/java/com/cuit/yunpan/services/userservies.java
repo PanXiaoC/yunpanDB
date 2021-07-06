@@ -17,4 +17,6 @@ public interface userservies {
     List<myfiles> getallfile(userinfo user, myfiles myfile);
     String getusername(userinfo user);
     String updatefilename(userinfo user, myfiles myfile) throws IOException;
+    public List<myfiles> limitpage(Integer user_id,Integer page);
+    public String file_size_check(long s);
 }

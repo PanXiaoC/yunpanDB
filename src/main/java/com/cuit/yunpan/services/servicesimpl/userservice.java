@@ -189,4 +189,34 @@ public class userservice implements userservies {
         return "0";
     }
 
+    public List<myfiles> limitpage(Integer user_id,Integer page){//分页操作，输出页码。
+        Integer pagesize = 5;//一页中显示的条数
+        Integer pagemax = udao.countUserFile(user_id);
+        if(page <= 1){
+            return udao.limitpage_myfiles(user_id,0,pagesize);
+        }
+        if (page > 1 && page <= pagemax){
+            return udao.limitpage_myfiles(user_id,(page-1)*pagesize,pagesize);
+        }
+
+        return udao.limitpage_myfiles(user_id,(pagemax-1)*pagesize,pagesize);
+    }
+
+    public String file_size_check(long s){
+        String L = "0KB";
+        if(s < 1){
+            L = "1KB";
+        }
+        if(s >= 1 && s < 1024){
+            L = s + "KB";
+        }
+        if (s >= 1024 && s <1024*1024){
+            L = (s / 1024) + "MB";
+        }
+        if(s >= 1024*1024){
+            L = (s / (1024*1024))+"GB";
+        }
+        return L;
+    }
+
 }

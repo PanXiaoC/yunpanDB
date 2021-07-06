@@ -1,11 +1,9 @@
 package com.cuit.yunpan.dao;
 
 import com.cuit.yunpan.bean.myfiles;
+import com.cuit.yunpan.bean.recycl;
 import com.cuit.yunpan.bean.userinfo;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -60,5 +58,12 @@ public interface userdao {
     //根据id查找文件名
     @Select("select *from myfiles where id=#{id}")
     public myfiles getMyfilesByid(myfiles myfile);
-    //根据user-id查拥有多少个文件
+//    向回收站表插入数据
+    @Insert("insert into table_4(user_id,file_id,del_time,file_path,file_ext,file_size)" +
+            "values(#{user_id},#{file_id},now(),#{file_path},#{file_ext}),#{file_size}")
+    public boolean insertRecycl(recycl rec);
+//    从myfiles表中删除
+    @Delete("delete from myfiles where user_id=#{user_id}")
+    public boolean deleteMyfiles(Integer user_id);
+
 }
