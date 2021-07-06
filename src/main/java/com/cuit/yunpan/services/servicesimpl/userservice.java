@@ -52,6 +52,8 @@ public class userservice implements userservies {
     private userdao udao;
     @Resource
     private userinfo staticuser;
+    @Resource
+    private myfiles myf;
 
     @Override
     public Map<String,String> login(userinfo user){
@@ -138,7 +140,9 @@ public class userservice implements userservies {
 
         try {
             FileStatus fileStatus = fileSystem.getFileStatus(hdfsPath);
-            myfile.setFile_size(fileStatus.getLen()/1024);
+            Long s=fileStatus.getLen()/1024;
+
+            myfile.setFile_size(s.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -167,6 +171,22 @@ public class userservice implements userservies {
     public String getusername(userinfo user) {
         String s=udao.getusername(user);
         return s;
+    }
+
+    @Override
+    public String updatefilename(userinfo user,myfiles myfile) throws IOException {
+        myf=udao.getMyfilesByid(myfile);
+        String oldpath=myf.getFile_path();
+        String newpath="/"+user.getTel()+"/"+myfile.getFilename();
+        myfile.setFile_path(newpath);
+        Path old= new Path(oldpath);
+        Path newp= new Path(newpath);
+        fileSystem.rename(old,newp);
+        int s=udao.changeFilename(myfile);
+        if(s==1){
+            return "1";
+        }
+        return "0";
     }
 
 }

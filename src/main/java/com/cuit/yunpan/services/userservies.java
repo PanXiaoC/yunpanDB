@@ -16,4 +16,5 @@ public interface userservies {
     String fileserv(MultipartFile file, userinfo userb, myfiles myfile) throws IOException;
     List<myfiles> getallfile(userinfo user, myfiles myfile);
     String getusername(userinfo user);
+    String updatefilename(userinfo user, myfiles myfile) throws IOException;
 }

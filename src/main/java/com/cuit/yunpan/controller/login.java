@@ -160,10 +160,20 @@ public class login {
     }
     @RequestMapping("/renamefile")
     @ResponseBody
-    public String  renamefile(String id,String value){
-        System.out.println("进入修改文件名");
+    public String  renamefile(String id,String value,HttpSession session) throws IOException {
         System.out.println(id);
-     System.out.println(value);
+        System.out.println(value);
+        myfile.setFilename(value);
+        int s=Integer.parseInt(id);
+        myfile.setId(s);
+        String s1=users.updatefilename(userb,myfile);
+        if("1".equals(s1)){
+            List<myfiles> list;
+            list=users.getallfile(userb,myfile);
+            session.setAttribute("list",list);
+            System.out.println(list);
+            System.out.println("修改成功");
+        }
         return "success";
     }
 }

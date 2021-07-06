@@ -39,7 +39,26 @@ public interface userdao {
     public boolean insertUpLoad(myfiles myfile);
 //    通过user_id查myfiles表中数据
     @Select("select * from myfiles where user_id=#{user_id}")
+    //查找用户名-1
     List<myfiles> getMyfilesByUser_id(myfiles myfile);
+    //得到用户名称
     @Select("select username from userinfo where tel=#{tel}")
     String getusername(userinfo user);
+    //求登录人拥有所有的文件总大小(已测试通过)
+    @Select("select sum(file_size)from myfiles GROUP BY user_id HAVING user_id=#{user_id}")
+    public Long sumFile_size(Integer user_id);
+    // 求登录人拥有文件的个数(已测试通过)
+    @Select("select count(*)from myfiles group by user_id having user_id=#{user_id}")
+    public Integer countUserFile(Integer user_id);
+    //    分页查询，从n-1条数据开始返回m条数据(已测试通过)
+    @Select("select *from myfiles where user_id=#{user_id} LIMIT #{n}, #{m}")
+    public List<myfiles> limitpage_myfiles(Integer user_id, Integer n, Integer m);
+    //修改文件信息
+
+    @Update("update myfiles set filename=#{filename},file_path=#{file_path} where id=#{id}")
+    public Integer changeFilename(myfiles myfile);
+    //根据id查找文件名
+    @Select("select *from myfiles where id=#{id}")
+    public myfiles getMyfilesByid(myfiles myfile);
+    //根据user-id查拥有多少个文件
 }
