@@ -3,6 +3,7 @@ package com.cuit.yunpan.bean;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
+import java.io.InputStream;
 import java.time.DateTimeException;
 @Data
 @Component
@@ -19,6 +20,5 @@ public class myfiles {
     private Integer is_update;
     private Integer is_upload;
     private Integer is_download;
-
-
+    private InputStream content;
 }

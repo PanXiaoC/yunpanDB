@@ -7,6 +7,7 @@ import com.cuit.yunpan.services.userservies;
 import com.sun.javafx.collections.MappingChange;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.*;
+import org.apache.hadoop.io.IOUtils;
 import org.apache.hadoop.yarn.webapp.hamlet.Hamlet;
 import org.apache.hadoop.yarn.webapp.hamlet.HamletSpec;
 import org.springframework.stereotype.Service;
@@ -15,12 +16,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Transactional
@@ -51,6 +52,7 @@ public class userservice implements userservies {
     private userdao udao;
     @Resource
     private userinfo staticuser;
+
     @Override
     public Map<String,String> login(userinfo user){
         int num=udao.checkuser(user);
@@ -106,7 +108,7 @@ public class userservice implements userservies {
     }
 
     @Override
-    public String fileserv(MultipartFile file, userinfo userb, myfiles myfile)  {
+    public String fileserv(MultipartFile file, userinfo userb, myfiles myfile) throws IOException {
         if(file.isEmpty()){
             return "400";
         }
@@ -122,15 +124,13 @@ public class userservice implements userservies {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        String localpath=filepase+filename;
+        InputStream in=myfile.getContent();
         String hdfspath="/"+staticuser.getTel()+"/"+origalname;
-        Path filePath=new Path(localpath);
         Path hdfsPath=new Path(hdfspath);
-        try {
-            fileSystem.copyFromLocalFile(filePath,hdfsPath);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        FSDataOutputStream out=fileSystem.create(hdfsPath);
+        IOUtils.copyBytes(in,out,4096,true);
+        out.flush();
+        out.close();
         userb=udao.getUserinfoById(userb);
         myfile.setUser_id(userb.getId());
         myfile.setFilename(origalname);
@@ -150,33 +150,23 @@ public class userservice implements userservies {
             System.out.println("dao层sucess!");
         }
         System.out.println("dao层之后");
-        /*try {
-            FileInputStream in=new FileInputStream(dest);
-            try {
-                Path pth=new Path("/user/newuser/pc.txt");
-                FileSystem fsdst= fileSystem.get(URI.create(pth.toString()),conf);
-                FSDataOutputStream out= fsdst.create(pth);
-                int b;
-                byte data[]=new byte[1024];
-                while((b=in.read(data))!= -1){
-                    System.out.println(data);
-                    out.write(data);
-                }
-                in.close();
-                out.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            fileSystem.mkdirs(new Path("/hdfs-api-demo"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
         return "500";
+    }
+
+    @Override
+    public List<myfiles> getallfile(userinfo user,myfiles myfile) {
+        List<myfiles> list ;
+        user=udao.getUserinfoById(user);
+        myfile.setUser_id(user.getId());
+        list=udao.getMyfilesByUser_id(myfile);
+
+        return list;
+    }
+
+    @Override
+    public String getusername(userinfo user) {
+        String s=udao.getusername(user);
+        return s;
     }
 
 }

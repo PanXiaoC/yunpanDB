@@ -49,7 +49,11 @@ public class login {
        map= users.login(userb);
        if(map.get("login").equals("登录成功")){
            System.out.println("登录成功");
-           session.invalidate();
+           List<myfiles> list;
+           list=users.getallfile(userb,myfile);
+           session.setAttribute("list",list);
+           String s=users.getusername(userb);
+           session.setAttribute("username",s);
             return "index";
        }
        session.setAttribute("error","用户名或密码错误");
@@ -67,6 +71,12 @@ public class login {
         System.out.println("跳入文件");
         session.invalidate();
         return "submit";
+    }
+    @RequestMapping("/logout")
+    public String logout(HttpSession session){
+        System.out.println("退出系统");
+        session.invalidate();
+        return "login";
     }
     @RequestMapping("/tochangepwd")
     public String tochangepwd( HttpSession session){
@@ -129,14 +139,31 @@ public class login {
         return "√";
     }
     @RequestMapping(value="/doupload")
-    public String  doupload (@RequestParam("file") MultipartFile file){
+    public String  doupload (@RequestParam("file") MultipartFile file ,HttpSession session, HttpServletRequest request) throws IOException {
         System.out.println("你好，文件");
 //        System.out.println(userb);
+        myfile.setContent(file.getInputStream());
          String s = users.fileserv(file,userb,myfile);
          if(s.equals("500")){
+             List<myfiles> list;
+             list=users.getallfile(userb,myfile);
+             session.setAttribute("list",list);
+             System.out.println(list);
              return "index";
          }
+        List<myfiles> list;
+        list=users.getallfile(userb,myfile);
+        session.setAttribute("list",list);
+        System.out.println(list);
         System.out.println("=====");
          return "index";
+    }
+    @RequestMapping("/renamefile")
+    @ResponseBody
+    public String  renamefile(String id,String value){
+        System.out.println("进入修改文件名");
+        System.out.println(id);
+     System.out.println(value);
+        return "success";
     }
 }

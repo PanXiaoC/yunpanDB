@@ -111,10 +111,10 @@
                         </form>
                         <ul class="nav navbar-nav navbar-right">
                           <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><p class="text-warning">xiuzhong.li</p> <span class="caret"></span></a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><p class="text-warning"><span th:text="${session.username}"></span></p> <span class="caret"></span></a>
                             <ul class="dropdown-menu">
                               <li><a href="#"> <span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;个人中心</a></li>
-                              <li><a href="login.html"> <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>&nbsp;退出</a></li>
+                              <li><a href="/yunpan/logout"> <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>&nbsp;退出</a></li>
                             </ul>
                           </li>
                         </ul>
@@ -239,102 +239,44 @@
                                       <input type="checkbox" value="option1" aria-label="..." id="selectAll">
 
                             </th>
+                              <th>id</th>
                               <th>文件名</th>
                               <th>大小</th>
                               <th>修改日期</th>
                             </tr>
                           </thead>
                           <tbody>
-                            <tr class=" success">
+                            <tr class=" success" th:each="list1: ${session.list}">
                               <th scope="row">
                                 <input type="checkbox" name="ids" id="blankCheckbox" value="option1" aria-label="...">
                               </th>
-                              <td><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>&nbsp;&nbsp;software</td>
-                              <td>-</td>
-                              <td>2020-7-2 17:16</td>
+                              <td th:text="${list1.getId()}">&nbsp;&nbsp;</td>
+                              <td><input type="text" name="name" th:value="${list1.getFilename()}" th:id="${list1.getId()}" onblur="renamesubmit(this)"></td>
+                              <td th:text="${list1.getFile_size()}"></td>
+                              <td th:text="${list1.getCreate_time()}"></td>
                              <!-- <td>
                                 <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span>|
                                 <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>|
                                 <span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span>
                             </td>-->
                             </tr>
-                            <tr class="active">
-                              <th scope="row">
-                                <input type="checkbox" name="ids" value="option1" aria-label="...">
-                              </th>
-                              <td><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>&nbsp;&nbsp;mydoc</td>
-                              <td>-</td>
-                              <td>2020-7-2 17:16</td>
-                             <!-- <td>
-                                <span class="glyphicon glyphicon-share-alt" aria-hidden="true"  ></span>|
-                                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>|
-                                <span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span>
-                            </td>-->
-                            </tr>
-                            <tr class=" success">
-                              <th scope="row">
-                                <input type="checkbox" name="ids" value="option1" aria-label="...">
-                              </th>
-                              <td><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>&nbsp;&nbsp;mymusic</td>
-                              <td>-</td>
-                              <td>2020-7-2 17:16</td>
-                            <!--  <td>
-                                <span class="glyphicon glyphicon-share-alt" aria-hidden="true"  ></span>|
-                                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>|
-                                <span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span>
-                            </td>-->
-                            </tr>
-                            <tr>
-                              <th scope="row">
-                                <input type="checkbox"  name="ids" value="option1" aria-label="...">
-                              </th>
-                              <td><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>&nbsp;&nbsp;course</td>
-                              <td>-</td>
-                              <td>2020-7-2 17:16</td>
-                             <!-- <td>
-                                <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span>|
-                                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>|
-                                <span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span>
-                            </td>-->
-                            </tr>
-                            <tr class=" success">
-                              <th scope="row">
-                                <input type="checkbox" name="ids" value="option1" aria-label="...">
-                              </th>
-                              <td>我的学习笔记.doc</td>
-                              <td>16.7M</td>
-                              <td>2020-7-2 17:16</td>
-                             <!-- <td>
-                                <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span>|
-                                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>|
-                                <span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span>
-                            </td>-->
-                            </tr>
-                            <tr>
-                              <th scope="row">
-                                <input type="checkbox" name="ids" value="option1" aria-label="...">
-                              </th>
-                              <td>学霸笔记第一卷.doc</td>
-                              <td>2M</td>
-                              <td>2020-7-2 17:16</td>
-                             <!-- <td>
-                                <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span>|
-                                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>|
-                                <span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span>
-                            </td>-->
-                            </tr>
-                            <tr class=" success">
+
+
+
+
+
+                           <!-- <tr class=" success">
                               <th scope="row">
                                 <input type="checkbox" name="ids" value="option1" aria-label="...">
                               </th>
                               <td>学霸笔记第二卷.doc</td>
                               <td>3M</td>
                               <td>2020-7-2 17:16</td>
-                             <!-- <td>
+                             &lt;!&ndash; <td>
                                 <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span>|
                                 <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>|
                                 <span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span>
-                            </td>-->
+                            </td>&ndash;&gt;
                             </tr>
                             <tr>
                               <th scope="row">
@@ -343,11 +285,11 @@
                               <td>BootStrap入门.mp4</td>
                               <td>200M</td>
                               <td>2020-7-2 17:16</td>
-                              <!--<td>
+                              &lt;!&ndash;<td>
                                 <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span>|
                                 <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>|
                                 <span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span>
-                            </td>-->
+                            </td>&ndash;&gt;
                             </tr>
                             <tr class=" success">
                               <th scope="row">
@@ -356,11 +298,11 @@
                               <td>BootStrap从入门到放弃.mp4</td>
                               <td>300M</td>
                               <td>2020-7-2 17:16</td>
-                             <!-- <td>
+                             &lt;!&ndash; <td>
                                 <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span>|
                                 <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>|
                                 <span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span>
-                            </td>-->
+                            </td>&ndash;&gt;
                             </tr>
                             <tr>
                               <th scope="row">
@@ -369,12 +311,12 @@
                               <td>抖音热门金曲.mp3</td>
                               <td>200M</td>
                               <td>2020-7-2 17:16</td>
-                              <!--<td>
+                              &lt;!&ndash;<td>
                                 <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span>|
                                 <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>|
                                 <span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span>
-                            </td>-->
-                            </tr>
+                            </td>&ndash;&gt;
+                            </tr>-->
                           </tbody>
                         </table>
                         <div class="row clearfix">
@@ -421,21 +363,24 @@
     ================================================== -->
     <div style="text-align: center">Copyright&copy; by QuMingNanGroup</div>
     <script>
-      function ajaxsubmit() {
-        $.post({
-          url:"/yunpan/doupload",
-          data:{"file_path":$("#file_path").val()},
-          success:function (msg) {
-            if(msg==""){
-              $("#state" ).html( "<font color= 'red'>电话号码不存在，请重新输入</font>");
-              $( "#submit" ).prop( "disabled",true);
-            }
-            else{
-              $("#state" ).html( "<font color= 'geeen'></font>");
-              $( "#submit" ).prop( "disabled",true) ;
-            }
-          }
-        })
+      function renamesubmit(obj) {
+          $.post({
+              url:"http://localhost:8080/yunpan/renamefile",
+              data:{"id":obj.id,"value":obj.value},
+              success:function(msg){
+                  if(msg!="√"){
+                      $("#state" ).html( "<font color= 'red'>电话号码已存在</font>");
+                      $( "#submit" ).prop( "disabled",true) ;
+                  }
+                  else{
+                      $("#state" ).html( "<font color= 'geeen'></font>");
+                      $( "#submit" ).prop( "disabled",true) ;
+                  }
+              },
+              error:function () {
+                  console.log("错误回调函数");
+              }
+          });
       }
     </script>
   </body>

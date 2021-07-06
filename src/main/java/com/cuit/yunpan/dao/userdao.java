@@ -7,7 +7,9 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
-import java. util. List;
+
+import java.util.List;
+
 
 @Mapper
 @Repository
@@ -36,14 +38,8 @@ public interface userdao {
             " values(#{user_id},#{filename},#{file_ext},#{file_size},now(),#{is_upload},#{file_path})")
     public boolean insertUpLoad(myfiles myfile);
 //    通过user_id查myfiles表中数据
-    @Select("select *from myfiles where user_id=#{user_id}")
-    public List<myfiles> getMyfilesByUser_id(Integer user_id);
-//求登录人拥有所有的文件总大小(已测试)
-    @Select("select sum(file_size)from myfiles GROUP BY user_id HAVING user_id=#{user_id}")
-    public Long sumFile_size(Integer user_id);
-// 求登录人拥有文件的个数(已测试)
-    @Select("select count(*)from myfiles group by user_id having user_id=#{user_id}")
-    public Integer countUserFile(Integer user_id);
-
-    
+    @Select("select * from myfiles where user_id=#{user_id}")
+    List<myfiles> getMyfilesByUser_id(myfiles myfile);
+    @Select("select username from userinfo where tel=#{tel}")
+    String getusername(userinfo user);
 }
