@@ -151,8 +151,35 @@
                           <ul class="dropdown-menu">
   							<li class="btn-outline-info"><a href="#" data-toggle="modal" data-target="#fileUploadModal">上传文件</a></li>
   
-                            <li class="btn-outline-info"><a href="#">上传文件夹</a></li>
+                            <li class="btn-outline-info"><a href="#" data-toggle="modal" data-target="#fileUploadModal2">上传文件夹</a></li>
                           </ul>
+                            <!-- begin  文件夹上传模态对话框 -->
+                            <div class="modal fade" id="fileUploadModal2" tabindex="-1" role="dialog" aria-labelledby="fileUploadModalLabe2">
+                                <form action="#">
+                                    <div class="modal-dialog" role="document">
+
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                <h4 class="modal-title" id="fileUploadModalLabe2">文件夹创建</h4>
+                                            </div>
+                                            <div class="modal-body">
+
+                                                <div class="form-group">
+                                                    <label for="file">请选择你要上传的文件</label><br>
+                                                    <input type="text"  name="filebean" id="filebean">
+                                                </div>
+
+                                            </div>
+                                            <div class="modal-footer" id="modal5">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                <button  class="btn btn-primary" onclick="createfilebean()">创建完成</button>
+                                            </div>
+                                        </div>
+
+                                </form>
+                            </div>
+                        </div>
 							<!-- begin  文件上传模态对话框 -->
               <div class="modal fade" id="fileUploadModal" tabindex="-1" role="dialog" aria-labelledby="fileUploadModalLabel">
                 <form action="/yunpan/doupload" enctype="multipart/form-data" method="post">
@@ -191,16 +218,8 @@
                         <button type="button" class="btn btn-default btn-info">
                           <span class="glyphicon glyphicon-share-alt " aria-hidden="true"></span>分享
                         </button>
-                        <button type="button" class="btn btn-default btn-info">
-                          <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>下载
-                          
-                        </button>
-                        <button type="button" class="btn btn-default btn-info" id='delbtn'>
-                          
-                          <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> 删除
-                        </button>
-                        <button type="button" class="btn btn-default btn-info">重命名</button>
-                        <button type="button" class="btn btn-default btn-info">
+
+                        <button type="button" class="btn btn-default btn-info" onclick="showrecycle()">
                           <span class="glyphicon glyphicon-duplicate" aria-hidden="true"></span>&nbsp;回收站
                         </button>
                       </div>
@@ -229,7 +248,7 @@
                     </div>
                   </div>
                    <br>
-                  <div class="alert alert-info" role="alert">共999个对象，已用空间1.12GB</div>
+                  <div class="alert alert-info" role="alert">共 <span th:text="${session.count}"></span>个对象，已用空间 <span th:text="${session.sumsize}"></span></div>
                   
                       <div class="bs-example" data-example-id="hoverable-table">
                         <table class="table table-hover table table-striped" id="alldoc_list_tbl">
@@ -243,6 +262,7 @@
                               <th>文件名</th>
                               <th>大小</th>
                               <th>修改日期</th>
+                                <th>操作</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -251,9 +271,16 @@
                                 <input type="checkbox" name="ids" id="blankCheckbox" value="option1" aria-label="...">
                               </th>
                               <td th:text="${list1.getId()}">&nbsp;&nbsp;</td>
-                              <td><input type="text" name="name" th:value="${list1.getFilename()}" th:id="${list1.getId()}" onblur="renamesubmit(this)"></td>
+                              <td><span class="glyphicon glyphicon-folder-open" aria-hidden="true" th:if="${list1.getIs_folder}eq 1">&ensp;       </span><input type="text" name="name" th:value="${list1.getFilename()}" th:id="${list1.getId()}" onblur="renamesubmit(this)"></td>
                               <td th:text="${list1.getFile_size()}"></td>
                               <td th:text="${list1.getCreate_time()}"></td>
+                                <td>
+                                    <button th:id="${list1.getId()}"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></button>
+                                    <button><a th:href="@{'/downloadfile?id='+${list1.getId()}}" class="glyphicon glyphicon-download-alt" th:id="${list1.getId()}"> </a></button>
+                                    <button th:id="${list1.getId()} " onclick="deletefile(this)"><span class="glyphicon glyphicon-trash"></span></button>
+                                    <button th:id="${list1.getId()}"><span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span></button>
+                                </td>
+
                              <!-- <td>
                                 <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span>|
                                 <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>|
@@ -321,24 +348,18 @@
                         </table>
                         <div class="row clearfix">
   
-                          <div class="col-md-offset-9 col-md-3 column">
+                          <div class="col-md-offset-9 col-md-3 column" id="page">
                             <nav aria-label="Page navigation">
                               <ul class="pagination">
-                                <li>
                                   <a href="#" aria-label="Previous">
-                                    <span aria-hidden="true">&laquo;</span>
+                                    <button aria-hidden="true" onclick="usepage(this)" id="down" class="btn-outline-info">&laquo;</button>
                                   </a>
-                                </li>
-                                <li><a href="#">1</a></li>
-                                <li><a href="#">2</a></li>
-                                <li><a href="#">3</a></li>
-                                <li><a href="#">4</a></li>
-                                <li><a href="#">5</a></li>
-                                <li>
-                                  <a href="#" aria-label="Next">
-                                    <span aria-hidden="true">&raquo;</span>
+                                <button><input type="text" th:value="${session.page}" onblur="usepage(this) " id="center" ></button>
+                                 <a href="#" aria-label="Next">
+                                   <button aria-hidden="true" onclick="usepage(this)" id="up" class="btn-outline-info">
+                                       &raquo;</button>
                                   </a>
-                                </li>
+
                               </ul>
                             </nav>
                           </div>
@@ -361,16 +382,87 @@
     </div> <!-- /container -->
     <!-- Bootstrap core JavaScript
     ================================================== -->
-    <div style="text-align: center">Copyright&copy; by QuMingNanGroup</div>
     <script>
       function renamesubmit(obj) {
           $.post({
               url:"http://localhost:8080/yunpan/renamefile",
               data:{"id":obj.id,"value":obj.value},
               success:function(msg){
-                  if(msg!="√"){
-                      $("#state" ).html( "<font color= 'red'>电话号码已存在</font>");
+                  if(msg=="success"){
+                     $("#alldoc_list_tbl").html;
+                  }
+                  else{
+                      $("#state" ).html( "<font color= 'geeen'></font>");
                       $( "#submit" ).prop( "disabled",true) ;
+                  }
+              },
+              error:function () {
+                  console.log("错误回调函数");
+              }
+          });
+      }
+      function deletefile(obj) {
+          $.post({
+              url:"http://localhost:8080/yunpan/deletefile",
+              data:{"id":obj.id},
+              success:function(msg){
+                  if(msg!="success"){
+                      $("#alldoc_list_tbl").html;
+                  }
+                  else{
+                      $("#state" ).html( "<font color= 'geeen'></font>");
+                      $( "#submit" ).prop( "disabled",true) ;
+                  }
+              },
+              error:function () {
+                  console.log("错误回调函数");
+              }
+          });
+      }
+      function usepage(obj) {
+          $.post({
+              url:"http://localhost:8080/yunpan/updatepage",
+              data:{"id":obj.id,"page":$("#center").val()},
+              success:function(msg){
+                  if(msg=="success"){
+                      $("#alldoc_list_tbl").html;
+                  }
+                  else{
+                      $("#state" ).html( "<font color= 'geeen'></font>");
+                      $( "#submit" ).prop( "disabled",false) ;
+                  }
+              },
+              error:function () {
+                  console.log("错误回调函数");
+              }
+          });
+      }
+      function showrecycle() {
+          $.post({
+              url:"http://localhost:8080/yunpan/showrecycle",
+              data:null,
+              success:function(msg){
+                  if(msg=="success"){
+                      $("#alldoc_list_tbl").html;
+                      $( "#page" ).prop( "disabled",true) ;
+                  }
+                  else{
+                      $("#state" ).html( "<font color= 'geeen'></font>");
+                      $( "#submit" ).prop( "disabled",true) ;
+                  }
+              },
+              error:function () {
+                  console.log("错误回调函数");
+              }
+          });
+      }
+      function createfilebean() {
+          $.post({
+              url:"http://localhost:8080/yunpan/createfilebean",
+              data:{"filebean":$("#filebean").val()},
+              success:function(msg){
+                  if(msg=="success"){
+                      $("#alldoc_list_tbl").html;
                   }
                   else{
                       $("#state" ).html( "<font color= 'geeen'></font>");

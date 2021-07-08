@@ -4,6 +4,7 @@ import lombok.Data;
 import org.springframework.stereotype.Component;
 
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.time.DateTimeException;
 @Data
 @Component
@@ -12,7 +13,7 @@ public class myfiles {
     private Integer user_id;
     private String filename;
     private String file_ext;
-    private String file_size;
+    private Long file_size;
     private String create_time;
     private Integer is_delete;
     private Integer is_folder;
@@ -21,4 +22,5 @@ public class myfiles {
     private Integer is_upload;
     private Integer is_download;
     private InputStream content;
+    private OutputStream outcontent;
 }

@@ -1,6 +1,7 @@
 package com.cuit.yunpan.services.servicesimpl;
 
 import com.cuit.yunpan.bean.myfiles;
+import com.cuit.yunpan.bean.recycl;
 import com.cuit.yunpan.bean.userinfo;
 import com.cuit.yunpan.dao.userdao;
 import com.cuit.yunpan.services.userservies;
@@ -18,6 +19,7 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -54,6 +56,8 @@ public class userservice implements userservies {
     private userinfo staticuser;
     @Resource
     private myfiles myf;
+    @Resource
+    private recycl rec;
 
     @Override
     public Map<String,String> login(userinfo user){
@@ -133,6 +137,7 @@ public class userservice implements userservies {
         IOUtils.copyBytes(in,out,4096,true);
         out.flush();
         out.close();
+
         userb=udao.getUserinfoById(userb);
         myfile.setUser_id(userb.getId());
         myfile.setFilename(origalname);
@@ -140,19 +145,16 @@ public class userservice implements userservies {
 
         try {
             FileStatus fileStatus = fileSystem.getFileStatus(hdfsPath);
-            Long s=fileStatus.getLen()/1024;
-
-            myfile.setFile_size(s.toString());
+            myfile.setFile_size(  fileStatus.getLen()/1024);
         } catch (IOException e) {
             e.printStackTrace();
         }
         myfile.setFile_path(hdfspath);
         myfile.setIs_upload(1);
+
         System.out.println("dao层之前");
         System.out.println(myfile);
-        if(udao.insertUpLoad(myfile)){
-            System.out.println("dao层sucess!");
-        }
+        int s=udao.insertUpLoad(myfile);
         System.out.println("dao层之后");
         return "500";
     }
@@ -162,7 +164,7 @@ public class userservice implements userservies {
         List<myfiles> list ;
         user=udao.getUserinfoById(user);
         myfile.setUser_id(user.getId());
-        list=udao.getMyfilesByUser_id(myfile);
+        list =udao.limitpage_myfiles(user.getId(),0,2);
 
         return list;
     }
@@ -182,6 +184,7 @@ public class userservice implements userservies {
         Path old= new Path(oldpath);
         Path newp= new Path(newpath);
         fileSystem.rename(old,newp);
+        fileSystem.delete(old,false);
         int s=udao.changeFilename(myfile);
         if(s==1){
             return "1";
@@ -189,19 +192,91 @@ public class userservice implements userservies {
         return "0";
     }
 
-    public List<myfiles> limitpage(Integer user_id,Integer page){//分页操作，输出页码。
-        Integer pagesize = 5;//一页中显示的条数
-        Integer pagemax = udao.countUserFile(user_id);
-        if(page <= 1){
-            return udao.limitpage_myfiles(user_id,0,pagesize);
-        }
-        if (page > 1 && page <= pagemax){
-            return udao.limitpage_myfiles(user_id,(page-1)*pagesize,pagesize);
-        }
+    @Override
+    public String deletefiles(userinfo user, myfiles myfile) throws IOException {
+        myf=udao.getMyfilesByid(myfile);
+        String oldpath=myf.getFile_path();
+        String newpath="/"+user.getTel()+"/"+"recycle"+"/"+myf.getFilename();
+        System.out.println(newpath);
+        Path old= new Path(oldpath);
+        System.out.println(oldpath);
+        Path newp= new Path(newpath);
+        String newpath2="/"+user.getTel()+"/"+"recycle";
+        Path mulupath=new Path(newpath2);
+        fileSystem.mkdirs(mulupath);
+        fileSystem.rename(old,newp);
+        fileSystem.delete(old,false);
+        user=udao.getUserinfoByTel(user);
+        rec.setUser_id(user.getId());
+        rec.setFile_ext(myf.getFile_ext());
+        rec.setFile_path(newpath);
+        rec.setFile_size(myf.getFile_size());
+        rec.setFilename(myf.getFilename());
+        int s = udao.insertRecycl(rec);
+        udao.deleteMyfiles(myf);
+        return "0";
+    }
+    public InputStream  downloadfile(myfiles myfile) throws IOException {
 
-        return udao.limitpage_myfiles(user_id,(pagemax-1)*pagesize,pagesize);
+        myf=udao.getMyfilesByid(myfile);
+        String hdfspath=myf.getFile_path();
+        Path descpath=new Path(hdfspath);
+        InputStream is=fileSystem.open(descpath);
+        return is;
     }
 
+    public Map<String,Object> limitpage(userinfo user,Integer page){//分页操作，输出页码。
+        Integer pagesize = 2;//一页中显示的条数
+        user=udao.getUserinfoByTel(user);
+        myf.setUser_id(user.getId());
+        Integer pagemax = udao.countUserFile(myf);
+        Integer maxpage=(int)Math.ceil(pagemax/pagesize)+1;
+        System.out.println(maxpage);
+        System.out.println(pagemax);
+        Map<String,Object> map=new HashMap<>();
+        if(page <= 1){
+            List<myfiles> list;
+            list= udao.limitpage_myfiles(user.getId(),0,pagesize);
+            page=1;
+            map.put("page",page);
+            map.put("list",list);
+            return map;
+        }
+        if (page > 1 && page <= maxpage){
+            List<myfiles> list;
+            list=udao.limitpage_myfiles(user.getId(),(page-1)*pagesize,pagesize);
+            map.put("page",page);
+            map.put("list",list);
+            return map;
+        }
+        List<myfiles> list;
+        list= udao.limitpage_myfiles(user.getId(),(maxpage-1)*pagesize,pagesize);
+        map.put("page",maxpage);
+        map.put("list",list);
+        return map;
+    }
+    @Override
+    //在myfiles中，查询所有的共享文件（共享权限为1）
+    public List<myfiles> findShareInMyfiles(){
+        return  udao.findshare_myfiles(1);
+    }
+
+    @Override
+    //在myfiles中，计算某个角色的空间使用大小，即自身的空间大小总和,
+    public Map<String,Object> sumSize(userinfo user){
+        Map<String,Object> map = new HashMap<>();
+        user=udao.getUserinfoByTel(user);
+        myf.setUser_id(user.getId());
+        long sum = udao.sumOneFilesByUserid(myf);
+        String r = file_size_check(sum);
+        int count=udao.countUserFile(myf);
+        map.put("sumsize", r);
+        map.put("count", count);
+        return map;
+    }
+
+    @Override
+    //将myfiles中文件的大小进行单位换算，以kb为单位进行换算，最高不超过5GB；
     public String file_size_check(long s){
         String L = "0KB";
         if(s < 1){
@@ -219,4 +294,26 @@ public class userservice implements userservies {
         return L;
     }
 
+    @Override
+    public List<recycl> showshowrecycle_s(userinfo user) {
+        user=udao.getUserinfoByTel(user);
+        rec.setUser_id(user.getId());
+        List<recycl> list=udao.getallrecycle(rec);
+        return list;
+    }
+
+    @Override
+    public String createfilebean_s(myfiles myfile,userinfo user) throws IOException {
+        String newpath2="/"+user.getTel()+"/"+myfile.getFilename();
+        Path beanpath=new Path(newpath2);
+        fileSystem.mkdirs(beanpath);
+        user=udao.getUserinfoByTel(user);
+        myfile.setUser_id(user.getId());
+        myfile.setFile_path(newpath2);
+        myfile.setFile_ext("-");
+        myfile.setIs_folder(1);
+        myfile.setIs_upload(0);
+        udao.insertUpLoad(myfile);
+        return null;
+    }
 }
