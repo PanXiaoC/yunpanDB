@@ -69,7 +69,7 @@ public interface userdao {
     public List<myfiles> findshare_myfiles(Integer id_delete);
     //查询myfiles中某个user的所有文件总和；
     @Select("SELECT SUM(file_size) FROM myfiles WHERE user_id=#{user_id}")
-    public long sumOneFilesByUserid(myfiles myfile);
+    public Integer sumOneFilesByUserid(myfiles myfile);
 
     @Select("select * from table_4 where user_id=#{user_id}")
     public List<recycl> getallrecycle(recycl rec);

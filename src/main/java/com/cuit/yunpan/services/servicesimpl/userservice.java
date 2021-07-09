@@ -119,17 +119,7 @@ public class userservice implements userservies {
             return "400";
         }
         String origalname=file.getOriginalFilename();
-        String filename=System.currentTimeMillis()+"."+origalname.substring(origalname.lastIndexOf(".")+1);
-        String filepase="D:\\r\\";
-        File dest= new File(filepase+filename);
-        if(!dest.getParentFile().exists()){
-            dest.getParentFile().mkdirs();
-        }
-        try {
-            file.transferTo(dest);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
         InputStream in=myfile.getContent();
         String hdfspath="/"+staticuser.getTel()+"/"+origalname;
         Path hdfsPath=new Path(hdfspath);
@@ -151,6 +141,7 @@ public class userservice implements userservies {
         }
         myfile.setFile_path(hdfspath);
         myfile.setIs_upload(1);
+        myfile.setIs_folder(0);
 
         System.out.println("dao层之前");
         System.out.println(myfile);
@@ -164,8 +155,7 @@ public class userservice implements userservies {
         List<myfiles> list ;
         user=udao.getUserinfoById(user);
         myfile.setUser_id(user.getId());
-        list =udao.limitpage_myfiles(user.getId(),0,2);
-
+        list =udao.limitpage_myfiles(user.getId(),0,5);
         return list;
     }
 
@@ -226,16 +216,22 @@ public class userservice implements userservies {
     }
 
     public Map<String,Object> limitpage(userinfo user,Integer page){//分页操作，输出页码。
-        Integer pagesize = 2;//一页中显示的条数
+        Integer pagesize = 5;//一页中显示的条数
+        Map<String,Object> map=new HashMap<>();
         user=udao.getUserinfoByTel(user);
         myf.setUser_id(user.getId());
+        List<myfiles> list=null;
+        if(udao.countUserFile(myf)==null){
+            page=1;
+            map.put("page",page);
+            map.put("list",list);
+            return map;
+        }
         Integer pagemax = udao.countUserFile(myf);
         Integer maxpage=(int)Math.ceil(pagemax/pagesize)+1;
         System.out.println(maxpage);
         System.out.println(pagemax);
-        Map<String,Object> map=new HashMap<>();
         if(page <= 1){
-            List<myfiles> list;
             list= udao.limitpage_myfiles(user.getId(),0,pagesize);
             page=1;
             map.put("page",page);
@@ -243,13 +239,11 @@ public class userservice implements userservies {
             return map;
         }
         if (page > 1 && page <= maxpage){
-            List<myfiles> list;
             list=udao.limitpage_myfiles(user.getId(),(page-1)*pagesize,pagesize);
             map.put("page",page);
             map.put("list",list);
             return map;
         }
-        List<myfiles> list;
         list= udao.limitpage_myfiles(user.getId(),(maxpage-1)*pagesize,pagesize);
         map.put("page",maxpage);
         map.put("list",list);
@@ -267,7 +261,13 @@ public class userservice implements userservies {
         Map<String,Object> map = new HashMap<>();
         user=udao.getUserinfoByTel(user);
         myf.setUser_id(user.getId());
-        long sum = udao.sumOneFilesByUserid(myf);
+        System.out.println(udao.sumOneFilesByUserid(myf));
+        if(udao.sumOneFilesByUserid(myf)==null){
+            map.put("sumsize", 0);
+            map.put("count", 0);
+            return map;
+        }
+        long sum=udao.sumOneFilesByUserid(myf);
         String r = file_size_check(sum);
         int count=udao.countUserFile(myf);
         map.put("sumsize", r);
@@ -310,6 +310,7 @@ public class userservice implements userservies {
         user=udao.getUserinfoByTel(user);
         myfile.setUser_id(user.getId());
         myfile.setFile_path(newpath2);
+        myfile.setFile_size(null);
         myfile.setFile_ext("-");
         myfile.setIs_folder(1);
         myfile.setIs_upload(0);

@@ -21,7 +21,6 @@
     <script>
         function CheckForm() {
             var form = document.form1;
-            alert("d")
             if (form.tel.value === '') {
                 alert("请输入电话号码!");
                 form.tel.focus();
@@ -129,7 +128,7 @@ function ajaxsubmit() {
         data:{"tel":$("#tel").val()},
         success:function(msg){
         if(msg!="√"){
-            $("#state" ).html( "<font color= 'red'>电话号码已存在</font>");
+            $("#state" ).html( "<font color= 'red'>电话号码已存在或者为空值</font>");
             $( "#submit" ).prop( "disabled",true) ;
         }
         else{

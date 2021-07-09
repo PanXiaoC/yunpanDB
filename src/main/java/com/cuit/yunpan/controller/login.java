@@ -45,7 +45,7 @@ public class login {
         System.out.println("用户准备登录");
         return "login";
     }
-
+    //测试成功
     @RequestMapping("/dologin")
     public String  dologin (String pwd, String tel,HttpSession session, HttpServletRequest request){
         Map<String,String> map=new HashMap<>();
@@ -142,6 +142,9 @@ public class login {
     @ResponseBody
     public String  docheckuser (String tel){
         System.out.println("静茹");
+        if(tel==null){
+            return "用户已存在";
+        }
         Map<String,String> map=new HashMap<>();
         userb.setTel(tel);
         System.out.println(userb.getTel());
@@ -150,7 +153,7 @@ public class login {
             System.out.println("用户已存在");
             return "用户已存在";
         }
-        return "www.baidu.com";
+        return "√";
     }
     @RequestMapping(value="/doupload")
     public String  doupload (@RequestParam("file") MultipartFile file ,HttpSession session) throws IOException {
@@ -164,9 +167,9 @@ public class login {
              session.setAttribute("list",list);
              System.out.println(list);
              String s1=users.getusername(userb);
-             session.setAttribute("username",s);
+             session.setAttribute("username",s1);
              String s2="1";
-             session.setAttribute("page",s1);
+             session.setAttribute("page",s2);
              Map<String,Object> map2 =new HashMap<>();
              map2=users.sumSize(userb);
              session.setAttribute("count",map2.get("count"));
@@ -178,7 +181,7 @@ public class login {
         session.setAttribute("list",list);
         System.out.println(list);
         System.out.println("=====");
-         return "index";
+        return "index";
     }
     @RequestMapping("/renamefile")
     @ResponseBody
@@ -196,9 +199,9 @@ public class login {
             System.out.println(list);
             System.out.println("修改成功");
             String s3=users.getusername(userb);
-            session.setAttribute("username",s);
+            session.setAttribute("username",s3);
             String s5="1";
-            session.setAttribute("page",s1);
+            session.setAttribute("page",s5);
             Map<String,Object> map2 =new HashMap<>();
             map2=users.sumSize(userb);
             session.setAttribute("count",map2.get("count"));
@@ -222,9 +225,9 @@ public class login {
             System.out.println(list);
             System.out.println("删除成功");
             String s4=users.getusername(userb);
-            session.setAttribute("username",s);
+            session.setAttribute("username",s4);
             String s5="1";
-            session.setAttribute("page",s1);
+            session.setAttribute("page",s5);
             Map<String,Object> map2 =new HashMap<>();
             map2=users.sumSize(userb);
             session.setAttribute("count",map2.get("count"));
